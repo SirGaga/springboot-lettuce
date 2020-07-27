@@ -15,5 +15,9 @@ class SpringbootLettuceApplicationTests {
     void contextLoads() {
         System.out.println(userServiceImpl.getString("id"));
     }
+    @Test
+    void test() {
+        System.out.println(userServiceImpl.getUserById("2"));
+    }
 
 }
