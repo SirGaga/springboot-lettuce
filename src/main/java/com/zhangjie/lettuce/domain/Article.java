@@ -9,6 +9,10 @@ public class Article {
     private String createDate;
     private Integer clickNum;
 
+    public Integer getClickNum() {
+        return clickNum;
+    }
+
     public void setClickNum(Integer clickNum) {
         this.clickNum = clickNum;
     }
