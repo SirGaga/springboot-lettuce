@@ -11,10 +11,7 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -57,6 +54,7 @@ public class ListCacheServiceImpl {
         String key = "article:top5";
         List<Object> range = redisTemplate.opsForList().range(key, 0, 4);
 
+        assert range != null;
         return range.stream().map(object -> {
             List<Article> list = new ArrayList<>();
             if(object instanceof Article)
@@ -82,6 +80,36 @@ public class ListCacheServiceImpl {
         DateTimeFormatter ftf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         article.setCreateDate(ftf.format(LocalDateTime.ofInstant(Instant.ofEpochMilli(System.currentTimeMillis()), ZoneId.systemDefault())));
         redisTemplate.opsForList().rightPush(key,article);
+    }
+
+    public void orderQueue(String orderId){
+        String key = "queue:"+orderId;
+        redisTemplate.opsForList().leftPush(key,"1、商家发货（北京海淀区某仓库）");
+        redisTemplate.opsForList().leftPush(key,"2、快递取货");
+        redisTemplate.opsForList().leftPush(key,"3、北京首都机场-石家庄正定机场");
+        redisTemplate.opsForList().leftPush(key,"4、正定机场到裕华区集散地");
+        redisTemplate.opsForList().leftPush(key,"5、裕华区集散地到风尚水郡 ");
+        redisTemplate.opsForList().leftPush(key,"6、确认收货");
+    }
+
+    public String orderTouch(String orderId){
+        String keySuccess = "queue:"+orderId+":success";
+        String key = "queue:"+orderId;
+        return redisTemplate.opsForList().rightPopAndLeftPush(key,keySuccess).toString();
+    }
+
+    public List<String> orderSelect(String orderId){
+        String key = "queue:"+orderId;
+        return Objects.requireNonNull(redisTemplate.opsForList().range(key, 0, -1))
+                .stream().map(Object::toString).collect(Collectors.toList());
+
+    }
+
+    public List<String> orderSelectSuccess(String orderId){
+        String keySuccess = "queue:"+orderId+":success";
+        return Objects.requireNonNull(redisTemplate.opsForList().range(keySuccess, 0, -1))
+                .stream().map(Object::toString).collect(Collectors.toList());
+
     }
 
 

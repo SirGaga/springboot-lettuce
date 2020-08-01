@@ -36,5 +36,24 @@ class SpringbootLettuceApplicationTests {
     void test4(){
         listCacheService.addArticle();
     }
+    @Test
+    void test5(){
+        listCacheService.orderQueue("1");
+    }
+
+    @Test
+    void test6(){
+        listCacheService.orderTouch("1");
+    }
+
+    @Test
+    void test7(){
+        listCacheService.orderSelect("1").forEach(System.out::println);
+    }
+
+    @Test
+    void test8(){
+        listCacheService.orderSelectSuccess("1").forEach(System.out::println);
+    }
 
 }
